@@ -1,5 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
 
 const Store = ({appUser, setAppUser}) => {
   if (!appUser) {
@@ -8,7 +8,12 @@ const Store = ({appUser, setAppUser}) => {
   
   return (
     <div>
-      <h1>Store</h1>
+      <nav>
+        {appUser && <p>Welcome {appUser}</p>} 
+        {appUser === 'admin' &&  <Link to="/management">Management</Link>}
+        <Link to="/logout">Logout</Link>
+      </nav>
+      <h1>Store Page</h1>
     </div>
   );
 };
