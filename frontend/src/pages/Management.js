@@ -10,8 +10,8 @@ const Management = ({appUser, setAppUser}) => {
     <div>
       <nav>
         {appUser && <p>Welcome {appUser}</p>} 
-        <Link to="/store">Store</Link> | 
-        <Link to="/logout"> Logout</Link>
+        <Link to="/store">Store</Link> 
+        <Link to="/logout">Logout</Link>
       </nav>
       <h1>Management Page</h1>
     </div>
