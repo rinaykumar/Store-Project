@@ -83,7 +83,7 @@ public class Server {
                     AddItemDTO.class);
             // Add it to the list
             ItemsDAO itemsDAO = ItemsDAO.getInstance();
-            itemsDAO.addItem(itemDTO.item);
+            itemsDAO.addItem(itemDTO.item, itemDTO.price);
             System.out.println(bodyString);
             System.out.println(items.size());
             return "OK";
@@ -95,7 +95,7 @@ public class Server {
                     AddItemDTO.class);
             // Delete it from the list
             ItemsDAO itemsDAO = ItemsDAO.getInstance();
-            itemsDAO.deleteItem(itemDTO.item);
+            itemsDAO.deleteItem(itemDTO.item, itemDTO.price);
             System.out.println(bodyString);
             System.out.println(items.size());
             return "OK";
