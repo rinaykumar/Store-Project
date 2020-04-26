@@ -1,5 +1,6 @@
-package Server;
+package DAO;
 
+import Server.ItemsListDTO;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -18,14 +19,21 @@ public class ItemsDAO {
 
     }
 
-    // open connection
+    // Open connection
     MongoClient mongoClient = new MongoClient("localhost", 27017);
 
-    public void addItem(Map<String, Integer> item) {
+    public void addItem(String item) {
         MongoDatabase db = mongoClient.getDatabase("HW3Database");
         MongoCollection<Document> itemsCollection = db.getCollection("Items");
         Document newItem = new Document("item", item);
         itemsCollection.insertOne(newItem);
+    }
+
+    public void deleteItem(String item) {
+        MongoDatabase db = mongoClient.getDatabase("HW3Database");
+        MongoCollection<Document> itemsCollection = db.getCollection("Items");
+        Document deleteItem = new Document("item", item);
+        itemsCollection.findOneAndDelete(deleteItem);
     }
 
     public ItemsListDTO getAllItems() {
