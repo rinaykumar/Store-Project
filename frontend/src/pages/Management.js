@@ -2,11 +2,10 @@ import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import '../App.css';
 import axios from 'axios';
-import Items from '../components/Items';
 
 const Management = ({appUser, setAppUser}) => {
   const [item, setItem] = React.useState(''); 
-  const [items, setItems] = React.useState([]); 
+  const [items, setItems] = React.useState([]);
    
   const fetchItems = () => {
     axios.get('/api/getAllItems')
@@ -28,10 +27,11 @@ const Management = ({appUser, setAppUser}) => {
       .catch(console.log);
   };
 
-  const deleteItem = () => { 
-    console.log(item);
+  const deleteItem = (itemName) => { 
+    console.log("From deleteItem");
+    console.log(itemName);
     const body = {
-      item: item
+      item: itemName
     };
     axios.post('/api/deleteItem', body)
       .then(() => setItem(''))
@@ -61,11 +61,19 @@ const Management = ({appUser, setAppUser}) => {
         <input placeholder="Price"/>
         <input value={item} onChange={e => setItem(e.target.value)} placeholder="Item Name"/>
         <button onClick={submitItem}>Add Item</button>
-        <button onClick={deleteItem}>Delete Item</button>
       </div>
       <div>
         <p>Inventory:</p>
-        <Items items={items}/>
+        <div className="items-list">
+          {items.map((item) => {
+            return (
+              <div className="items-item">
+                {item}
+                <button onClick={() => deleteItem(item)}>Delete</button>
+              </div>
+            ); 
+          })}
+        </div>
       </div>
     </div>
   );
