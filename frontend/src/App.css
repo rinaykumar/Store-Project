@@ -37,14 +37,14 @@
   }
 }
 
-.notes-list{
+.items-list{
   height: 200px;
   overflow-y: scroll;
   width: 400px;
 }
 
-.notes-item{
+.items-item{
   padding: 5px;
-  border: 1px solid white;
+  border: 1px solid black;
   margin-bottom: 5px;
 }
