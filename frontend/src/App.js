@@ -1,19 +1,22 @@
 import React from 'react';
 import './App.css';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Store from './pages/Store';
 import Management from './pages/Management';
+import Logout from './pages/Logout';
 
 const App = () => {
   const [appUser, setAppUser] = React.useState('');
 
   return (
     <div>
-      <BrowserRouter>
       <Switch>
         <Route path="/login">
           <Login appUser={appUser} setAppUser={setAppUser} />
+        </Route>
+        <Route path="/logout">
+          <Logout appUser={appUser} setAppUser={setAppUser} />
         </Route>
         <Route path="/store">
           <Store appUser={appUser} setAppUser={setAppUser} />
@@ -25,7 +28,6 @@ const App = () => {
           <Login appUser={appUser} setAppUser={setAppUser} />
         </Route>
       </Switch>
-      </BrowserRouter>
     </div>
   );
 };

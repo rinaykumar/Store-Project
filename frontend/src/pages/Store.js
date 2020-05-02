@@ -1,12 +1,5 @@
 import React from 'react';
-import { Redirect } from 'react-router-dom';
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Alert from "@material-ui/lab/Alert";
-import { makeStyles } from "@material-ui/core/styles";
+import { Redirect, Link } from 'react-router-dom';
 
 const Store = ({appUser, setAppUser}) => {
   if (!appUser) {
@@ -15,7 +8,12 @@ const Store = ({appUser, setAppUser}) => {
   
   return (
     <div>
-      <h1>Store</h1>
+      <nav>
+        {appUser && <p>Welcome {appUser}</p>} 
+        {appUser === 'admin' &&  <Link to="/management">Management</Link>}
+        <Link to="/logout">Logout</Link>
+      </nav>
+      <h1>Store Page</h1>
     </div>
   );
 };
