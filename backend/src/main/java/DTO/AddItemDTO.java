@@ -1,4 +1,4 @@
-package Server;
+package DTO;
 
 public class AddItemDTO {
     public final String item;

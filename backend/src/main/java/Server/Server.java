@@ -2,6 +2,10 @@ package Server;
 
 import DAO.ItemsDAO;
 import static spark.Spark.*;
+import DTO.AddItemDTO;
+import DTO.AuthDTO;
+import DTO.AuthResponseDTO;
+import DTO.ItemsListDTO;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
