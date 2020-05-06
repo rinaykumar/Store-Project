@@ -60,9 +60,11 @@ const Management = ({appUser, setAppUser}) => {
     fetchItems();
   }, []);
 
+  /* Only admin can access management page
   if (appUser !== 'admin') {
     return <Redirect to="/"/>;
   }
+  */
 
   return (
     <div>
