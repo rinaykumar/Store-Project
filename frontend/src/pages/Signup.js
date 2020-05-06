@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
 
-const Login = ({appUser, setAppUser}) => {
+const Signup = ({appUser, setAppUser}) => {
   const [username, setUsername] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
@@ -12,7 +12,7 @@ const Login = ({appUser, setAppUser}) => {
       username: username,
       password: password,
     };
-    axios.post('/api/authenticate', body)
+    axios.post('/api/register', body)
       .then((res) =>{
         console.log(res.data);
         if(res.data.success){
@@ -33,7 +33,7 @@ const Login = ({appUser, setAppUser}) => {
 
   return (
     <div>
-      <h1>Login</h1>
+      <h1>Signup</h1>
       <div>
         <input 
           value = {username}
@@ -48,11 +48,11 @@ const Login = ({appUser, setAppUser}) => {
         />
       </div>
       <div>
-        <button disabled={!username || !password} onClick={handleAuth}>Log In</button>
+        <button disabled={!username || !password} onClick={handleAuth}>Sign up</button>
       </div>
       {error && <strong>{error}</strong>}
     </div>
   );
 };
 
-export default Login;
+export default Signup;
