@@ -4,6 +4,13 @@
 
 .App-logo {
   height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
 }
 
 .App-header {
@@ -18,36 +25,30 @@
 }
 
 .App-link {
-  color: #09d3ac;
+  color: #61dafb;
 }
 
-.clicker{
-  width:200px;
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.items-list{
   height: 200px;
-  font-size: 24px;
+  overflow-y: scroll;
+  width: 400px;
 }
 
-.user-counter{
+.items-item{
   padding: 5px;
-  background: black;
-  color: white;
-  margin-bottom: 50px;
-}
-
-.notes{
-  width:600px;
-  display: flex;
-  margin: 0 auto;
-  margin-top: 40px;
-  flex-direction: column;
-}
-
-.note-item{
   border: 1px solid black;
-  flex-grow: 1;
-  display: flex;
+  margin-bottom: 5px;
 }
 
-.note-content{
-  flex-grow: 2;
+.dropdown{
+  width: 50vh;
 }

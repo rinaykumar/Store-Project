@@ -1,13 +1,13 @@
-package demo;
+package DTO;
 
 public class TransactionDTO {
     public final String item;
     public final double price;
-    public final String username;
+    public final int    quantity;
 
-    public TransactionDTO(String item, double price, String username) {
+    public TransactionDTO(String item, double price, int quantity) {
         this.item = item;
         this.price = price;
-        this.username=username;
+        this.quantity = quantity;
     }
 }

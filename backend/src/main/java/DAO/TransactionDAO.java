@@ -1,5 +1,7 @@
-package demo;
+package DAO;
 
+import DTO.TransListDTO;
+import DTO.TransactionDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
@@ -28,7 +30,7 @@ public class TransactionDAO {
 
 
 
-    public static List<String> listTransaction() {
+    public static TransListDTO listTransaction() {
         MongoDatabase db = mongoClient.getDatabase("HW3Database");
         MongoCollection<Document> transactionCollection = db.getCollection("Transactions");
 
@@ -41,16 +43,16 @@ public class TransactionDAO {
                 })
                 .collect(Collectors.toList());
 
-        return  transactionList;
+        return  new TransListDTO(transactionList);
     }
 
 
-    public void createTransaction(String item, double price, String username) {
+    public void createTransaction(String item, double price, int quantity) {
         MongoDatabase db = mongoClient.getDatabase("HW3Database");
         MongoCollection<Document> transactionCollection = db.getCollection("Transactions");
 
         // Create new DTO and convert to JSON
-        TransactionDTO transaction = new TransactionDTO(item, price, username);
+        TransactionDTO transaction = new TransactionDTO(item, price, quantity);
         String transactionJSON = gson.toJson(transaction);
 
         // Create new mongo Document from JSON

@@ -1,35 +1,31 @@
 import React from 'react';
 import './App.css';
-import { Switch, Route, Link } from 'react-router-dom';
-import Home from './pages/Home';
+import { Switch, Route } from 'react-router-dom';
 import Login from './pages/Login';
-import Signup from './pages/Signup';
-import UserPage from './pages/UserPage';
+import Store from './pages/Store';
+import Management from './pages/Management';
+import Logout from './pages/Logout';
 
 const App = () => {
-  const [appUser, setAppUser] = React.useState(null);
-  
+  const [appUser, setAppUser] = React.useState('');
+
   return (
     <div>
-      <nav>
-        <Link to="/"> Home </Link>
-        {appUser && <Link to="/logout">Log Out</Link>}
-        {!appUser &&<Link to="/login"> Login</Link>}
-        {!appUser &&<Link to="/signup"> Sign Up</Link>}
-        {appUser &&<Link to="/userpage">User Page</Link>}
-      </nav>
       <Switch>
         <Route path="/login">
-          <Login appUser={appUser} setAppUser={setAppUser}/>
+          <Login appUser={appUser} setAppUser={setAppUser} />
         </Route>
-        <Route path="/signup">
-          <Signup appUser={appUser} setAppUser={setAppUser}/>
+        <Route path="/logout">
+          <Logout appUser={appUser} setAppUser={setAppUser} />
         </Route>
-        <Route path="/userpage">
-          <UserPage appUser={appUser} setAppUser={setAppUser}/>
+        <Route path="/store">
+          <Store appUser={appUser} setAppUser={setAppUser} />
+        </Route>
+        <Route path="/management">
+          <Management appUser={appUser} setAppUser={setAppUser} />
         </Route>
         <Route path="/">
-          <Home />
+          <Login appUser={appUser} setAppUser={setAppUser} />
         </Route>
       </Switch>
     </div>

@@ -1,15 +1,17 @@
 import React from 'react';
-import axios from 'axios'; // don't forget this
-import Notes from '../components/Notes';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link } from 'react-router-dom';
+import '../App.css';
+import axios from 'axios';
 
 const Store = ({appUser, setAppUser}) => {
-  // pass in default value into useState
-  const [items, setItems] = React.useState('');
   const [selectedItem, setSelectedItem] = React.useState('');
-  //const [username, setUsername] = React.useState('');
-  let itemsMap = new Map();
+  const [item, setItem] = React.useState('');
+  const [items, setItems] = React.useState([]);
+
+  const [trans, setTrans] = React.useState([]);
+  const [price, setPrice] = React.useState('');
   const [quantity, setQuan] = React.useState('');
+  let itemsMap = new Map();
 
   const fetchItems = () => {
     axios.get('/api/getAllItems')
@@ -31,58 +33,56 @@ const Store = ({appUser, setAppUser}) => {
     console.log("From parsePrice");
     return itemsMap.get(selectedItem);
   }
-  
+
   const fetchTrans = () => {
     // utility to get all notes
     axios.get('/api/getTrans')
       .then((res) => {
         console.log(res);
-        //setItem(res.data.item); // update state variable
-        //setPrice(res.data.price);
-        //setUsername(res.data.username);
-        setQuan(res.data.quantity);
+        setTrans(res.data.trans);
       })
       .catch(console.log);
   };
 
   const submitTrans = () => { // arrow/lambda function
-    //console.log(item);
-    //console.log(price);
-    //console.log(username);
+    console.log(item);
+    console.log(price);
     console.log(quantity);
 
     const body = {
-      //item: item,
-      //price: price,
-      //username: username
+      item: item,
+      price: price,
       quantity: quantity
     };
 
     axios.post('/api/createTrans', body)
-      //.then(() => setPrice(''))
-      //.then(() => setItem(''))
-      //.then(() => setUsername(''))
+      .then(() => setItem(''))
+      .then(() => setPrice(''))
       .then(() => setQuan(''))
       .then(() => fetchTrans()) // fetch after submit
       .catch(console.log);
   };
-
-  // this is a hook
+  
   React.useEffect(() => {
-    // this will load notes when the page loads
-    fetchNotes();
-  }, []); // pass empty array
-
-  if(!appUser){
-    return <Redirect to="/login" />;
+    fetchItems();
+  }, []);
+  
+  /* Only logged in users can access
+  if (!appUser) {
+    return <Redirect to="/"/>;
   }
+  */
 
-  // jsx
   return (
     <div>
-      <h1>Store</h1>
+      <nav>
+        {appUser && <p>Welcome {appUser}</p>} 
+        {appUser === 'admin' &&  <Link to="/management">Management</Link>}
+        <Link to="/logout">Logout</Link>
+      </nav>
+      <h1>Store Page</h1>
       <div>
-        <select class="dropdown" onChange={e => setSelectedItem(e.target.value)}>
+        <select class="dropdown"  onChange={e => setSelectedItem(e.target.value)}>
         <option disabled selected value>Select An Item</option>
         {items.map((item) => {
               return (
@@ -92,8 +92,25 @@ const Store = ({appUser, setAppUser}) => {
               ); 
           })}
         </select>
-        <input value={parsePrice(selectedItem)} placeholder="Price"></input>
+        <input value={item} onChange={e => setItem(e.target.value)} placeholder="testI"></input>
+        <input value={price} onChange={e => setPrice(e.target.value)} placeholder="testp"></input>
+        <input value={parsePrice(selectedItem)} onChange={e => setPrice(e.target.value)} placeholder="Price"></input>
         <input value={quantity} onChange={e => setQuan(e.target.value)} placeholder="Quantity"></input>
+        <button onClick={submitTrans}>Add Transaction</button>
+      </div>
+      <div>
+        <p>Shopping Cart:</p>
+        <div className="trans-list">
+          {items.map((item) => {
+            return (
+              <div className="trans-item">
+                {parsePrice(item)}
+                {parseItem(item)}
+                {quantity}
+              </div>
+            ); 
+          })}
+        </div>
       </div>
     </div>
   );
