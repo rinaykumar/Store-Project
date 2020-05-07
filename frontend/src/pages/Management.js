@@ -197,17 +197,7 @@ const Management = ({ appUser, setAppUser }) => {
 
       <Container className={classes.bodyContent}>
         {appUser && <p>Welcome {appUser}</p>}
-        {/* <input
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          placeholder="Price"
-        /> */}
-        {/* <input
-          value={item}
-          onChange={(e) => setItem(e.target.value)}
-          placeholder="Item Name"
-        /> */}
-        {/* <button onClick={submitItem}>Add</button> */}
+        
         <form className={classes.root} noValidate autoComplete="off">
           <TextField
             value={price}

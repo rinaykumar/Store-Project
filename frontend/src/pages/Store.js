@@ -8,9 +8,13 @@ import {
   Tab,
   Toolbar,
   Grid,
+  MenuItem,
   Paper,
   TextField,
+  InputLabel,
+  FormControl,
   Button,
+  Select,
   Container,
 } from "@material-ui/core";
 import { makeStyles, withTheme } from "@material-ui/core/styles";
@@ -20,6 +24,17 @@ import axios from "axios";
 const useStyles = makeStyles((theme) => ({
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
+  },
+  root: {
+    display: "flex",
+    "& > *": {
+      margin: theme.spacing(1),
+      // width: "25ch",
+      minWidth: 120,
+    },
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -41,8 +56,20 @@ const useStyles = makeStyles((theme) => ({
   bodyContent: {
     marginTop: theme.spacing(10),
     marginLeft: "2rem",
-
   },
+
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+
+  text: {
+    marginTop: "1.8rem",
+    maxWidth  : "30px",
+  }
 }));
 
 const Store = ({ appUser, setAppUser }) => {
@@ -99,7 +126,11 @@ const Store = ({ appUser, setAppUser }) => {
           <div>
             <nav>
               <Typography component="h7" variant="h7">
-              {appUser === "admin" && <Link to="/management" className={classes.right}>Management</Link>}
+                {appUser === "admin" && (
+                  <Link to="/management" className={classes.right}>
+                    Management
+                  </Link>
+                )}
                 <Link to="/logout" className={classes.right}>
                   Logout
                 </Link>
@@ -110,30 +141,43 @@ const Store = ({ appUser, setAppUser }) => {
       </AppBar>
 
       <Container className={classes.bodyContent}>
-      {appUser && <p>Welcome {appUser}</p>}
-      <div>
-        <select
-          class="dropdown"
-          onChange={(e) => setSelectedItem(e.target.value)}
-        >
-          <option disabled selected value>
-            Select An Item
-          </option>
-          {items.map((item) => {
-            return <option>{parseItem(item)}</option>;
-          })}
-        </select>
-        <input value={parsePrice(selectedItem)} placeholder="Price"></input>
-        <input value="" placeholder="Quantity"></input>
-      </div>
-      </Container>
-
-      {/* <nav>
         {appUser && <p>Welcome {appUser}</p>}
-        {appUser === "admin" && <Link to="/management">Management</Link>}
-        <Link to="/logout">Logout</Link>
-      </nav> */}
 
+        <form className={classes.root} noValidate autoComplete="off">
+          <FormControl
+            className={classes.formControl}
+          >
+            <InputLabel id="demo-simple-select-label">Select Item</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              onChange={(e) => setSelectedItem(e.target.value)}
+            >
+              {items.map((item) => {
+                return <MenuItem  value={parseItem(item)}>{parseItem(item)}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+         
+
+          <Typography className={classes.text}>
+            Price: ${parsePrice(selectedItem)}
+          </Typography>
+        
+          <TextField
+          
+            id="outlined-basic"
+            label="Quantity"
+            variant="outlined"
+          />
+
+          <Button variant="contained" color="primary">
+            Add To Cart
+          </Button>
+        </form>
+
+
+      </Container>
     </div>
   );
 };
