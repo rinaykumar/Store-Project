@@ -1,17 +1,31 @@
 import React from "react";
 import { Redirect, Link } from "react-router-dom";
 
-import {Typography, Alert, AppBar, Tabs, Tab, Toolbar, Grid, Paper, TextField, Button} from "@material-ui/core";
+import {
+  Typography,
+  Alert,
+  AppBar,
+  Tabs,
+  Tab,
+  Toolbar,
+  Grid,
+  Paper,
+  TextField,
+  Button,
+} from "@material-ui/core";
 
 import { makeStyles, withTheme } from "@material-ui/core/styles";
 
 import "../App.css";
 import axios from "axios";
 
-
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
+    display: "flex",
+    '& > *': {
+      margin: theme.spacing(1),
+      width: '25ch',
+    },
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
@@ -19,12 +33,11 @@ const useStyles = makeStyles(theme => ({
 
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
-
   },
   content: {
     flexGrow: 1,
-    height: '100vh',
-    overflow: 'auto',
+    height: "100vh",
+    overflow: "auto",
   },
   container: {
     paddingTop: theme.spacing(4),
@@ -33,22 +46,32 @@ const useStyles = makeStyles(theme => ({
   title: {
     flexGrow: 1,
   },
-  right: {
 
+  right: {
     color: "white",
     opacity: "0.6",
-    textDecoration: 'none',
+    textDecoration: "none",
     paddingLeft: "1em",
-    '&:hover': {
+    "&:hover": {
       opacity: "1",
-    }
+    },
   },
-  
+
+  itemsList: {
+    // marginTop: "50em",
+  },
+
+  bodyContent: {
+    marginTop: "10em",
+    marginLeft: "2rem"
+    // opacity: "0",
+  },
+
   paper: {
     padding: theme.spacing(2),
-    display: 'flex',
-    overflow: 'auto',
-    flexDirection: 'column',
+    display: "flex",
+    overflow: "auto",
+    flexDirection: "column",
   },
 }));
 
@@ -117,53 +140,71 @@ const Management = ({ appUser, setAppUser }) => {
   //   return <Redirect to="/" />;
   // }
 
-
-
   return (
     <div>
-
-       <AppBar position="absolute"  className={classes.appBar} >
+      <AppBar position="absolute" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.title}
+          >
             Management Dashboard
           </Typography>
           <div>
-        <nav>
-          {appUser && <p>Welcome {appUser}</p>}
-          <Typography component="h7" variant="h7" >
-          <Link to="/store" className={classes.right}>Visit Store</Link>
-          <Link to="/logout" className={classes.right}>Logout</Link>
-          </Typography>
-
-        </nav>
-        
-      </div>
+            <nav>
+              
+              <Typography component="h7" variant="h7">
+                <Link to="/store" className={classes.right}>
+                  Visit Store
+                </Link>
+                <Link to="/logout" className={classes.right}>
+                  Logout
+                </Link>
+              </Typography>
+            </nav>
+          </div>
         </Toolbar>
       </AppBar>
 
-      <div>
-        <input
+      <div className={classes.bodyContent}>
+      {appUser && <p>Welcome {appUser}</p>}
+        {/* <input
           value={price}
           onChange={(e) => setPrice(e.target.value)}
           placeholder="Price"
-        />
-        <input
+        /> */}
+        {/* <input
           value={item}
           onChange={(e) => setItem(e.target.value)}
           placeholder="Item Name"
-        />
-        <button onClick={submitItem}>Add</button>
+        /> */}
+        {/* <button onClick={submitItem}>Add</button> */}
+        <form className={classes.root} noValidate autoComplete="off">
+          
+      {/* <TextField 
+      // value={item}  
+      // onChange={(e) => setItem(e.target.value)} 
+      id="outlined-basic" 
+      label="Outlined" 
+      variant="Enter Item Name" /> */}
+<TextField value={price}  onChange={(e) => setPrice(e.target.value)} id="outlined-basic" label="Enter Price" variant="outlined" />
+<TextField value={item}  onChange={(e) => setItem(e.target.value)} id="outlined-basic" label="Enter Item Name" variant="outlined" />
+<Button variant="contained" color="primary" onClick={submitItem}>Add</Button>
+    </form>
+        
       </div>
       <div>
         <p>Inventory:</p>
-        <div className="items-list">
+        <div className="itemsList">
           {items.map((item) => {
             return (
               <div className="items-item">
                 {parsePrice(item)}
                 {parseItem(item)}
-                <button onClick={() => deleteItem(item)}>Delete</button>
+                <Button variant="contained" color="primary" onClick={() => deleteItem(item)}>Delete</Button>
               </div>
             );
           })}
