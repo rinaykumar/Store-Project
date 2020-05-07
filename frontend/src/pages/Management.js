@@ -1,19 +1,59 @@
 import React from "react";
 import { Redirect, Link } from "react-router-dom";
-import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Alert from "@material-ui/lab/Alert";
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
+
+import {Typography, Alert, AppBar, Tabs, Tab, Toolbar, Grid, Paper, TextField, Button} from "@material-ui/core";
+
+import { makeStyles, withTheme } from "@material-ui/core/styles";
 
 import "../App.css";
 import axios from "axios";
 
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    display: 'flex',
+  },
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+
+  },
+  content: {
+    flexGrow: 1,
+    height: '100vh',
+    overflow: 'auto',
+  },
+  container: {
+    paddingTop: theme.spacing(4),
+    paddingBottom: theme.spacing(4),
+  },
+  title: {
+    flexGrow: 1,
+  },
+  right: {
+
+    color: "white",
+    opacity: "0.6",
+    textDecoration: 'none',
+    paddingLeft: "1em",
+    '&:hover': {
+      opacity: "1",
+    }
+  },
+  
+  paper: {
+    padding: theme.spacing(2),
+    display: 'flex',
+    overflow: 'auto',
+    flexDirection: 'column',
+  },
+}));
+
 const Management = ({ appUser, setAppUser }) => {
+  const classes = useStyles();
   const [item, setItem] = React.useState("");
   const [price, setPrice] = React.useState("");
   const [items, setItems] = React.useState([]);
@@ -73,28 +113,35 @@ const Management = ({ appUser, setAppUser }) => {
     fetchItems();
   }, []);
 
-  if (appUser !== "admin") {
-    return <Redirect to="/" />;
-  }
+  // if (appUser !== "admin") {
+  //   return <Redirect to="/" />;
+  // }
+
+
 
   return (
     <div>
-      <AppBar title="My App">
-        <Tabs>
-          <Tab label="Item 1" />
-          <Tab label="Item 2" />
-          <Tab label="Item 3" />
-          <Tab label="Item 4" />
-        </Tabs>
-      </AppBar>
-      <div>
+
+       <AppBar position="absolute"  className={classes.appBar} >
+        <Toolbar className={classes.toolbar}>
+
+          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
+            Management Dashboard
+          </Typography>
+          <div>
         <nav>
           {appUser && <p>Welcome {appUser}</p>}
-          <Link to="/store">Store</Link>
-          <Link to="/logout">Logout</Link>
+          <Typography component="h7" variant="h7" >
+          <Link to="/store" className={classes.right}>Visit Store</Link>
+          <Link to="/logout" className={classes.right}>Logout</Link>
+          </Typography>
+
         </nav>
-        <h1>Management Page</h1>
+        
       </div>
+        </Toolbar>
+      </AppBar>
+
       <div>
         <input
           value={price}
