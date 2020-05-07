@@ -45,12 +45,12 @@ public class TransactionDAO {
     }
 
 
-    public void createTransaction(String item, double price) {
+    public void createTransaction(String item, double price, String username) {
         MongoDatabase db = mongoClient.getDatabase("HW3Database");
         MongoCollection<Document> transactionCollection = db.getCollection("Transactions");
 
         // Create new DTO and convert to JSON
-        TransactionDTO transaction = new TransactionDTO(item, price);
+        TransactionDTO transaction = new TransactionDTO(item, price, username);
         String transactionJSON = gson.toJson(transaction);
 
         // Create new mongo Document from JSON

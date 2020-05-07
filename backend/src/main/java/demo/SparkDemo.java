@@ -70,17 +70,17 @@ public class SparkDemo {
         TransactionDTO transactionDTO = gson.fromJson(bodyString, TransactionDTO.class);
 
         TransactionDAO TransDAO = TransactionDAO.getInstance();
-        TransDAO.createTransaction(transactionDTO.item,transactionDTO.price);
-
+        TransDAO.createTransaction(transactionDTO.item,transactionDTO.price,transactionDTO.username);
+    return "tran created successfully";
     });
 
     post("/api/getTrans", (req,res) -> {
         //String bodyString = req.body();
         //TransactionDTO transactionDTO = gson.fromJson(bodyString, TransactionDTO.class);
 
-        TransactionDAO TransDAO = TransactionDAO.getInstance();
+        //TransactionDAO TransDAO = TransactionDAO.getInstance();
         TransactionDAO.listTransaction();
-
+    return "retrieving all trans";
     });
   }
 }
