@@ -59,8 +59,6 @@ const useStyles = makeStyles((theme) => ({
   },
 
   itemList: {
-    // marginTop: "50em",
-
     paddingTop: theme.spacing(2),
     width: "75ch",
     margin: theme.spacing(1),
