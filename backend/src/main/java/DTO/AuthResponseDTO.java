@@ -1,4 +1,4 @@
-package Server;
+package DTO;
 
 public class AuthResponseDTO {
     public final Boolean success;

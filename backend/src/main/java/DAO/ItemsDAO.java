@@ -1,7 +1,7 @@
 package DAO;
 
-import Server.AddItemDTO;
-import Server.ItemsListDTO;
+import DTO.AddItemDTO;
+import DTO.ItemsListDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.MongoClient;

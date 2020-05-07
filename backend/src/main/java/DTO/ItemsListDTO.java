@@ -1,4 +1,4 @@
-package Server;
+package DTO;
 
 import java.util.List;
 

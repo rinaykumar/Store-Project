@@ -1,4 +1,4 @@
-package Server;
+package DTO;
 
 // From frontend to backend
 public class AuthDTO {
