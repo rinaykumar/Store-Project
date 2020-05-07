@@ -5,34 +5,64 @@ import { Redirect } from 'react-router-dom';
 
 const Store = ({appUser, setAppUser}) => {
   // pass in default value into useState
-  const [note, setNote] = React.useState(''); // create a state variable + setter
-  const [notes, setNotes] = React.useState(['Demo note']); // if map of undefined 
-  const [item, setItem] = React.useState('');
-  const [price, setPrice] = React.useState('');
+  const [items, setItems] = React.useState('');
+  const [selectedItem, setSelectedItem] = React.useState('');
+  //const [username, setUsername] = React.useState('');
+  let itemsMap = new Map();
+  const [quantity, setQuan] = React.useState('');
 
+  const fetchItems = () => {
+    axios.get('/api/getAllItems')
+      .then((res) => {
+        console.log(res);
+        setItems(res.data.items);
+      })
+      .catch(console.log);
+  };
+
+  const parseItem = (item) => {
+    let obj = JSON.parse(item);
+    itemsMap.set(obj.item, obj.price)
+    console.log(itemsMap);
+    return obj.item;
+  }
+
+  const parsePrice = (selectedItem) => {
+    console.log("From parsePrice");
+    return itemsMap.get(selectedItem);
+  }
+  
   const fetchTrans = () => {
     // utility to get all notes
     axios.get('/api/getTrans')
       .then((res) => {
         console.log(res);
-        setItem(res.data.item); // update state variable
-        setPrice(res.data.price);
+        //setItem(res.data.item); // update state variable
+        //setPrice(res.data.price);
+        //setUsername(res.data.username);
+        setQuan(res.data.quantity);
       })
       .catch(console.log);
   };
 
   const submitTrans = () => { // arrow/lambda function
-    console.log(item);
-    console.log(price);
+    //console.log(item);
+    //console.log(price);
+    //console.log(username);
+    console.log(quantity);
 
     const body = {
-      item: item,
-      price: price
+      //item: item,
+      //price: price,
+      //username: username
+      quantity: quantity
     };
 
     axios.post('/api/createTrans', body)
-      .then(() => setPrice(''))
-      .then(() => setItem(''))
+      //.then(() => setPrice(''))
+      //.then(() => setItem(''))
+      //.then(() => setUsername(''))
+      .then(() => setQuan(''))
       .then(() => fetchTrans()) // fetch after submit
       .catch(console.log);
   };
@@ -52,16 +82,18 @@ const Store = ({appUser, setAppUser}) => {
     <div>
       <h1>Store</h1>
       <div>
-        <div>
-          <input value={item} onChange={e => setItem(e.target.value)} />
-          <input value={price} onChange={e => setPrice(e.target.value)} />
-        </div>
-        <div>
-          <button onClick={submitTrans}>Add</button>
-        </div>
-        <div>
-          <Notes notes={notes} />
-        </div>
+        <select class="dropdown" onChange={e => setSelectedItem(e.target.value)}>
+        <option disabled selected value>Select An Item</option>
+        {items.map((item) => {
+              return (
+                <option>
+                  {parseItem(item)}
+                </option>
+              ); 
+          })}
+        </select>
+        <input value={parsePrice(selectedItem)} placeholder="Price"></input>
+        <input value={quantity} onChange={e => setQuan(e.target.value)} placeholder="Quantity"></input>
       </div>
     </div>
   );
