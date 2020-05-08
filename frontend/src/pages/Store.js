@@ -33,6 +33,12 @@ const useStyles = makeStyles((theme) => ({
       minWidth: 120,
     },
   },
+  paperList: {
+    height: "5ch",
+    width: "75ch",
+    display: "flex",
+
+  },
   selectEmpty: {
     marginTop: theme.spacing(2),
   },
@@ -68,8 +74,28 @@ const useStyles = makeStyles((theme) => ({
 
   text: {
     marginTop: "1.8rem",
-    maxWidth  : "30px",
-  }
+    maxWidth: "30px",
+  },
+
+  itemName: {
+    paddingLeft: theme.spacing(4),
+    paddingTop: "1rem",
+  },
+
+  price: {
+    // paddingLeft: theme.spacing(2),
+    paddingTop: "1rem",
+  },
+
+  deleteButton: {
+    paddingLeft: theme.spacing(4),
+    paddingTop: "0.45rem",
+    paddingRight: "0.3rem",
+  },
+
+  totalLabel: {
+    paddingTop: "1rem",
+  },
 }));
 
 const Store = ({appUser, setAppUser}) => {
@@ -81,6 +107,7 @@ const Store = ({appUser, setAppUser}) => {
   const [transactions, setTransactions] = React.useState([]);
   let itemsMap = new Map();
   let total = [];
+  let cartItemNames = [];
 
   const fetchItems = () => {
     axios.get('/api/getAllItems')
@@ -96,7 +123,6 @@ const Store = ({appUser, setAppUser}) => {
       .then((res) => {
         console.log(res);
         setCart(res.data.cart);
-        //console.log(cart)
       })
       .catch(console.log);
   };
@@ -134,8 +160,6 @@ const Store = ({appUser, setAppUser}) => {
       quantity: parseCartQuantity(cartName)
     };
     axios.post('/api/deleteCart', body)
-      //.then(() => setItem(''))
-      //.then(() => setPrice(''))
       .then(() => fetchCart())
       .catch(console.log);
   };
@@ -145,12 +169,10 @@ const Store = ({appUser, setAppUser}) => {
     console.log(cartItems);
     console.log(sumTotal(cartTotal));
     const body = {
-      items: cartItems,
+      items: cartItemNames,
       total: sumTotal(cartTotal),
     };
     axios.post('/api/addTransaction', body)
-      //.then(() => setSelectedItem(''))
-      //.then(() => setQuantity(''))
       .then(() => fetchTransactions())
       .catch(console.log);
   };
@@ -169,6 +191,7 @@ const Store = ({appUser, setAppUser}) => {
 
   const parseCartItem = (cartItem) => {
     let obj = JSON.parse(cartItem);
+    cartItemNames.push(obj.item);
     return obj.item;
   }
 
@@ -182,6 +205,20 @@ const Store = ({appUser, setAppUser}) => {
     total.push(obj.subtotal);
     return obj.subtotal;
   }
+
+  const parseTransaction = (transactionItem) => {
+    console.log("From parseTransaction");
+    let obj = JSON.parse(transactionItem);
+    let itemString = obj.items.toString();
+    console.log(itemString);
+    return itemString;
+  }
+
+  const parseTransactionTotal = (transactionItem) => {
+    let obj = JSON.parse(transactionItem);
+    return obj.total;
+  }
+  
 
   const sumTotal = (total) => {
     let cartTotal = total.reduce(function(a, b) {return a+b;}, 0);
@@ -232,20 +269,55 @@ const Store = ({appUser, setAppUser}) => {
       <Container className={classes.bodyContent}>
         {appUser && <p>Welcome {appUser}</p>}
 
-        <p>Cart:</p>
+        <p>Cart</p>
         <div>
           {cart.map((cartItem) => {
             return (
-              <div class="items-item">
-                {parseCartItem(cartItem)}
-                <div>{parseCartQuantity(cartItem)}</div>
-                ${parseCartSubtotal(cartItem)}
-                <button onClick={() => deleteCart(cartItem)}>Delete</button>
-              </div> 
+              <Paper elevation={3} className={classes.paperList}>
+                <Grid
+                  justify="space-between" // Add it here :)
+                  container
+                  spacing={24}
+                >
+                  <Grid item>
+                    <div className={classes.itemName}>
+                      {" "}
+                      {parseCartItem(cartItem)}
+                    </div>
+                  </Grid>
+
+                  <Grid item>
+                    <div className={classes.itemName}>
+                      x{parseCartQuantity(cartItem)}
+                    </div>
+                  </Grid>
+
+                  <Grid item>
+                    <div className={classes.price}>
+                      <b>${parseCartSubtotal(cartItem)}</b>
+                    </div>
+                  </Grid>
+
+                  <Grid item>
+                    <div className={classes.deleteButton}>
+                      <Button
+                        variant="outlined"
+                        color="secondary"
+                        onClick={() => deleteCart(cartItem)}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </Grid>
+                </Grid>
+              </Paper>
             );
           })}
-        </div> 
-        <div>Total: {sumTotal(total)}</div> 
+        </div>
+        
+        <div className={classes.totalLabel}>
+          Total: <b>${sumTotal(total)}</b>
+        </div>
       
         <form className={classes.root} noValidate autoComplete="off">
           <FormControl
@@ -286,8 +358,10 @@ const Store = ({appUser, setAppUser}) => {
           {transactions.map((transactionItem) => {
             return (
               <div class="items-item">
-                {transactionItem}
-                
+                Items: {parseTransaction(transactionItem)}
+                <div>
+                  Total: ${parseTransactionTotal(transactionItem)}
+                </div>
               </div> 
             );
           })}
