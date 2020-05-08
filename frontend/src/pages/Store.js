@@ -1,5 +1,7 @@
-import React from "react";
-import { Redirect, Link } from "react-router-dom";
+import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
+import '../App.css';
+import axios from 'axios';
 import {
   Typography,
   Alert,
@@ -18,8 +20,6 @@ import {
   Container,
 } from "@material-ui/core";
 import { makeStyles, withTheme } from "@material-ui/core/styles";
-import "../App.css";
-import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -72,15 +72,18 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Store = ({ appUser, setAppUser }) => {
+const Store = ({appUser, setAppUser}) => {
   const classes = useStyles();
-  const [selectedItem, setSelectedItem] = React.useState("");
+  const [selectedItem, setSelectedItem] = React.useState('');
   const [items, setItems] = React.useState([]);
+  const [quantity, setQuantity] = React.useState('');
+  const [cart, setCart] = React.useState([]);
+  const [transactions, setTransactions] = React.useState([]);
   let itemsMap = new Map();
+  let total = [];
 
   const fetchItems = () => {
-    axios
-      .get("/api/getAllItems")
+    axios.get('/api/getAllItems')
       .then((res) => {
         console.log(res);
         setItems(res.data.items);
@@ -88,22 +91,109 @@ const Store = ({ appUser, setAppUser }) => {
       .catch(console.log);
   };
 
+  const fetchCart = () => {
+    axios.get('/api/getCart')
+      .then((res) => {
+        console.log(res);
+        setCart(res.data.cart);
+        //console.log(cart)
+      })
+      .catch(console.log);
+  };
+
+  const fetchTransactions = () => {
+    axios.get('/api/getTransactions')
+      .then((res) => {
+        console.log(res);
+        setTransactions(res.data.transactions);
+      })
+      .catch(console.log);
+  };
+
+  const addCart = (name, quant) => { 
+    console.log("From addCart");
+    console.log(name);
+    console.log(quant);
+    const body = {
+      item: name,
+      price: itemsMap.get(name),
+      quantity: quant
+    };
+    axios.post('/api/addCart', body)
+      .then(() => setSelectedItem(''))
+      .then(() => setQuantity(''))
+      .then(() => fetchCart())
+      .catch(console.log);
+  };
+
+  const deleteCart = (cartName) => { 
+    console.log("From deleteCart");
+    const body = {
+      item: parseCartItem(cartName),
+      price: itemsMap.get(parseCartItem(cartName)),
+      quantity: parseCartQuantity(cartName)
+    };
+    axios.post('/api/deleteCart', body)
+      //.then(() => setItem(''))
+      //.then(() => setPrice(''))
+      .then(() => fetchCart())
+      .catch(console.log);
+  };
+
+  const addTransaction = (cartItems, cartTotal) => { 
+    console.log("From addTransaction");
+    console.log(cartItems);
+    console.log(sumTotal(cartTotal));
+    const body = {
+      items: cartItems,
+      total: sumTotal(cartTotal),
+    };
+    axios.post('/api/addTransaction', body)
+      //.then(() => setSelectedItem(''))
+      //.then(() => setQuantity(''))
+      .then(() => fetchTransactions())
+      .catch(console.log);
+  };
+
   const parseItem = (item) => {
     let obj = JSON.parse(item);
-    itemsMap.set(obj.item, obj.price);
+    itemsMap.set(obj.item, obj.price)
     console.log(itemsMap);
     return obj.item;
-  };
+  }
 
   const parsePrice = (selectedItem) => {
     console.log("From parsePrice");
     return itemsMap.get(selectedItem);
-  };
+  }
 
+  const parseCartItem = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    return obj.item;
+  }
+
+  const parseCartQuantity = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    return obj.quantity;
+  }
+
+  const parseCartSubtotal = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    total.push(obj.subtotal);
+    return obj.subtotal;
+  }
+
+  const sumTotal = (total) => {
+    let cartTotal = total.reduce(function(a, b) {return a+b;}, 0);
+    return cartTotal
+  }
+  
   React.useEffect(() => {
     fetchItems();
+    fetchCart();
+    fetchTransactions();
   }, []);
-
+  
   /* Only logged in users can access
   if (!appUser) {
     return <Redirect to="/"/>;
@@ -139,10 +229,24 @@ const Store = ({ appUser, setAppUser }) => {
           </div>
         </Toolbar>
       </AppBar>
-
       <Container className={classes.bodyContent}>
         {appUser && <p>Welcome {appUser}</p>}
 
+        <p>Cart:</p>
+        <div>
+          {cart.map((cartItem) => {
+            return (
+              <div class="items-item">
+                {parseCartItem(cartItem)}
+                <div>{parseCartQuantity(cartItem)}</div>
+                ${parseCartSubtotal(cartItem)}
+                <button onClick={() => deleteCart(cartItem)}>Delete</button>
+              </div> 
+            );
+          })}
+        </div> 
+        <div>Total: {sumTotal(total)}</div> 
+      
         <form className={classes.root} noValidate autoComplete="off">
           <FormControl
             className={classes.formControl}
@@ -159,25 +263,40 @@ const Store = ({ appUser, setAppUser }) => {
             </Select>
           </FormControl>
          
-
           <Typography className={classes.text}>
             Price: ${parsePrice(selectedItem)}
           </Typography>
-        
+
           <TextField
-          
             id="outlined-basic"
             label="Quantity"
             variant="outlined"
+            onChange={e => setQuantity(e.target.value)}
           />
 
-          <Button variant="contained" color="primary">
+          <Button variant="contained" color="primary" onClick={() => addCart(selectedItem, quantity)}>
             Add To Cart
           </Button>
-        </form>
 
+          <Button variant="contained" color="secondary" onClick={() => addTransaction(cart, total)}>Checkout</Button>
+        </form>
+        
+        <div>Transaction History:
+        <div>
+          {transactions.map((transactionItem) => {
+            return (
+              <div class="items-item">
+                {transactionItem}
+                
+              </div> 
+            );
+          })}
+        </div> 
+
+        </div>
 
       </Container>
+
     </div>
   );
 };

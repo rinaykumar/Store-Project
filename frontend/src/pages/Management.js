@@ -102,15 +102,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Management = ({ appUser, setAppUser }) => {
+const Management = ({appUser, setAppUser}) => {
   const classes = useStyles();
-  const [item, setItem] = React.useState("");
-  const [price, setPrice] = React.useState("");
+  const [item, setItem] = React.useState('');
+  const [price, setPrice] = React.useState(''); 
   const [items, setItems] = React.useState([]);
-
+   
   const fetchItems = () => {
-    axios
-      .get("/api/getAllItems")
+    axios.get('/api/getAllItems')
       .then((res) => {
         console.log(res);
         setItems(res.data.items);
@@ -118,33 +117,31 @@ const Management = ({ appUser, setAppUser }) => {
       .catch(console.log);
   };
 
-  const submitItem = () => {
+  const submitItem = () => { 
     console.log("From submitItem");
     console.log(item);
     console.log(price);
     const body = {
       item: item,
-      price: price,
+      price: price
     };
-    axios
-      .post("/api/addItem", body)
-      .then(() => setItem(""))
-      .then(() => setPrice(""))
+    axios.post('/api/addItem', body)
+      .then(() => setItem(''))
+      .then(() => setPrice(''))
       .then(() => fetchItems())
       .catch(console.log);
   };
 
-  const deleteItem = (itemName) => {
+  const deleteItem = (itemName) => { 
     console.log("From deleteItem");
     console.log(itemName);
     const body = {
       item: parseItem(itemName),
-      price: parsePrice(itemName),
+      price: parsePrice(itemName)
     };
-    axios
-      .post("/api/deleteItem", body)
-      .then(() => setItem(""))
-      .then(() => setPrice(""))
+    axios.post('/api/deleteItem', body)
+      .then(() => setItem(''))
+      .then(() => setPrice(''))
       .then(() => fetchItems())
       .catch(console.log);
   };
@@ -152,20 +149,22 @@ const Management = ({ appUser, setAppUser }) => {
   const parseItem = (item) => {
     let obj = JSON.parse(item);
     return obj.item;
-  };
+  }
 
   const parsePrice = (item) => {
     let obj = JSON.parse(item);
     return obj.price;
-  };
+  }
 
   React.useEffect(() => {
     fetchItems();
   }, []);
 
-  // if (appUser !== "admin") {
-  //   return <Redirect to="/" />;
-  // }
+  /* Only admin can access management page
+  if (appUser !== 'admin') {
+    return <Redirect to="/"/>;
+  }
+  */
 
   return (
     <div>

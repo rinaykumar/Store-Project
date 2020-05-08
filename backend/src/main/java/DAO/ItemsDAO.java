@@ -71,6 +71,21 @@ public class ItemsDAO {
         return new ItemsListDTO(items);
     }
 
+    /*
+    public ItemsListDTO getAllUsers() {
+        MongoDatabase db = mongoClient.getDatabase("HW3Database");
+        MongoCollection<Document> itemsCollection = db.getCollection("Users");
+        List<String> items = itemsCollection.find().into(new ArrayList<>())
+                .stream()
+                .map(document -> {
+                    document.remove("_id");
+                    return document.toJson();
+                })
+                .collect(Collectors.toList());
+        return new ItemsListDTO(items);
+    }
+    */
+
     public static ItemsDAO getInstance() {
         if(instance == null) {
             instance = new ItemsDAO();
