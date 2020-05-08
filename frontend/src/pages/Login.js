@@ -9,6 +9,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import brand2 from "./img/brand2.png";  
 import axios from 'axios';
 import {Redirect} from 'react-router-dom';
+import 'typeface-ubuntu';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -42,6 +43,9 @@ const useStyles = makeStyles(theme => ({
     },
     icon: {
       marginBottom: theme.spacing(8)
+    },
+    logo: {
+      fontFamily: 'Ubuntu'
     }
   }));
 
@@ -91,10 +95,11 @@ const useStyles = makeStyles(theme => ({
           square
         >
           <div className={classes.paper}>
-            <Typography component="h1" variant="h4" className={classes.icon}>
-              Login
-            </Typography>
-            
+            <div>
+              <Typography align="center" color="primary" component="h1" variant="h2" className={classes.logo}>codeCamp</Typography>
+              <br/>
+            </div>
+            <h1>Login</h1>
               <TextField
                 variant="outlined"
                 margin="normal"
