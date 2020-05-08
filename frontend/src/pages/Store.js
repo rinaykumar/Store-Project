@@ -2,11 +2,85 @@ import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import '../App.css';
 import axios from 'axios';
+import {
+  Typography,
+  Alert,
+  AppBar,
+  Tabs,
+  Tab,
+  Toolbar,
+  Grid,
+  MenuItem,
+  Paper,
+  TextField,
+  InputLabel,
+  FormControl,
+  Button,
+  Select,
+  Container,
+} from "@material-ui/core";
+import { makeStyles, withTheme } from "@material-ui/core/styles";
+
+const useStyles = makeStyles((theme) => ({
+  toolbar: {
+    paddingRight: 24, // keep right padding when drawer closed
+  },
+  root: {
+    display: "flex",
+    "& > *": {
+      margin: theme.spacing(1),
+      // width: "25ch",
+      minWidth: 120,
+    },
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+  appBar: {
+    zIndex: theme.zIndex.drawer + 1,
+  },
+  title: {
+    flexGrow: 1,
+  },
+
+  right: {
+    color: "white",
+    opacity: "0.6",
+    textDecoration: "none",
+    paddingLeft: "1em",
+    "&:hover": {
+      opacity: "1",
+    },
+  },
+
+  bodyContent: {
+    marginTop: theme.spacing(10),
+    marginLeft: "2rem",
+  },
+
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
+
+  text: {
+    marginTop: "1.8rem",
+    maxWidth  : "30px",
+  }
+}));
 
 const Store = ({appUser, setAppUser}) => {
+  const classes = useStyles();
   const [selectedItem, setSelectedItem] = React.useState('');
   const [items, setItems] = React.useState([]);
+  const [quantity, setQuantity] = React.useState('');
+  const [cart, setCart] = React.useState([]);
+  const [transactions, setTransactions] = React.useState([]);
   let itemsMap = new Map();
+  let total = [];
 
   const fetchItems = () => {
     axios.get('/api/getAllItems')
@@ -14,6 +88,70 @@ const Store = ({appUser, setAppUser}) => {
         console.log(res);
         setItems(res.data.items);
       })
+      .catch(console.log);
+  };
+
+  const fetchCart = () => {
+    axios.get('/api/getCart')
+      .then((res) => {
+        console.log(res);
+        setCart(res.data.cart);
+        //console.log(cart)
+      })
+      .catch(console.log);
+  };
+
+  const fetchTransactions = () => {
+    axios.get('/api/getTransactions')
+      .then((res) => {
+        console.log(res);
+        setTransactions(res.data.transactions);
+      })
+      .catch(console.log);
+  };
+
+  const addCart = (name, quant) => { 
+    console.log("From addCart");
+    console.log(name);
+    console.log(quant);
+    const body = {
+      item: name,
+      price: itemsMap.get(name),
+      quantity: quant
+    };
+    axios.post('/api/addCart', body)
+      .then(() => setSelectedItem(''))
+      .then(() => setQuantity(''))
+      .then(() => fetchCart())
+      .catch(console.log);
+  };
+
+  const deleteCart = (cartName) => { 
+    console.log("From deleteCart");
+    const body = {
+      item: parseCartItem(cartName),
+      price: itemsMap.get(parseCartItem(cartName)),
+      quantity: parseCartQuantity(cartName)
+    };
+    axios.post('/api/deleteCart', body)
+      //.then(() => setItem(''))
+      //.then(() => setPrice(''))
+      .then(() => fetchCart())
+      .catch(console.log);
+  };
+
+  const addTransaction = (cartItems, cartTotal) => { 
+    console.log("From addTransaction");
+    console.log(cartItems);
+    console.log(sumTotal(cartTotal));
+    const body = {
+      items: cartItems,
+      total: sumTotal(cartTotal),
+    };
+    axios.post('/api/addTransaction', body)
+      //.then(() => setSelectedItem(''))
+      //.then(() => setQuantity(''))
+      .then(() => fetchTransactions())
       .catch(console.log);
   };
 
@@ -28,9 +166,32 @@ const Store = ({appUser, setAppUser}) => {
     console.log("From parsePrice");
     return itemsMap.get(selectedItem);
   }
+
+  const parseCartItem = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    return obj.item;
+  }
+
+  const parseCartQuantity = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    return obj.quantity;
+  }
+
+  const parseCartSubtotal = (cartItem) => {
+    let obj = JSON.parse(cartItem);
+    total.push(obj.subtotal);
+    return obj.subtotal;
+  }
+
+  const sumTotal = (total) => {
+    let cartTotal = total.reduce(function(a, b) {return a+b;}, 0);
+    return cartTotal
+  }
   
   React.useEffect(() => {
     fetchItems();
+    fetchCart();
+    fetchTransactions();
   }, []);
   
   /* Only logged in users can access
@@ -41,26 +202,101 @@ const Store = ({appUser, setAppUser}) => {
 
   return (
     <div>
-      <nav>
-        {appUser && <p>Welcome {appUser}</p>} 
-        {appUser === 'admin' &&  <Link to="/management">Management</Link>}
-        <Link to="/logout">Logout</Link>
-      </nav>
-      <h1>Store Page</h1>
-      <div>
-        <select class="dropdown" onChange={e => setSelectedItem(e.target.value)}>
-        <option disabled selected value>Select An Item</option>
-        {items.map((item) => {
-              return (
-                <option>
-                  {parseItem(item)}
-                </option>
-              ); 
+      <AppBar position="absolute" className={classes.appBar}>
+        <Toolbar className={classes.toolbar}>
+          <Typography
+            component="h1"
+            variant="h6"
+            color="inherit"
+            noWrap
+            className={classes.title}
+          >
+            Store
+          </Typography>
+          <div>
+            <nav>
+              <Typography component="h7" variant="h7">
+                {appUser === "admin" && (
+                  <Link to="/management" className={classes.right}>
+                    Management
+                  </Link>
+                )}
+                <Link to="/logout" className={classes.right}>
+                  Logout
+                </Link>
+              </Typography>
+            </nav>
+          </div>
+        </Toolbar>
+      </AppBar>
+      <Container className={classes.bodyContent}>
+        {appUser && <p>Welcome {appUser}</p>}
+
+        <p>Cart:</p>
+        <div>
+          {cart.map((cartItem) => {
+            return (
+              <div class="items-item">
+                {parseCartItem(cartItem)}
+                <div>{parseCartQuantity(cartItem)}</div>
+                ${parseCartSubtotal(cartItem)}
+                <button onClick={() => deleteCart(cartItem)}>Delete</button>
+              </div> 
+            );
           })}
-        </select>
-        <input value={parsePrice(selectedItem)} placeholder="Price"></input>
-        <input value="" placeholder="Quantity"></input>
-      </div>
+        </div> 
+        <div>Total: {sumTotal(total)}</div> 
+      
+        <form className={classes.root} noValidate autoComplete="off">
+          <FormControl
+            className={classes.formControl}
+          >
+            <InputLabel id="demo-simple-select-label">Select Item</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              onChange={(e) => setSelectedItem(e.target.value)}
+            >
+              {items.map((item) => {
+                return <MenuItem  value={parseItem(item)}>{parseItem(item)}</MenuItem>;
+              })}
+            </Select>
+          </FormControl>
+         
+          <Typography className={classes.text}>
+            Price: ${parsePrice(selectedItem)}
+          </Typography>
+
+          <TextField
+            id="outlined-basic"
+            label="Quantity"
+            variant="outlined"
+            onChange={e => setQuantity(e.target.value)}
+          />
+
+          <Button variant="contained" color="primary" onClick={() => addCart(selectedItem, quantity)}>
+            Add To Cart
+          </Button>
+
+          <Button variant="contained" color="secondary" onClick={() => addTransaction(cart, total)}>Checkout</Button>
+        </form>
+        
+        <div>Transaction History:
+        <div>
+          {transactions.map((transactionItem) => {
+            return (
+              <div class="items-item">
+                {transactionItem}
+                
+              </div> 
+            );
+          })}
+        </div> 
+
+        </div>
+
+      </Container>
+
     </div>
   );
 };

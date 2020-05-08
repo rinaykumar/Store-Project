@@ -1,11 +1,11 @@
 package Server;
 
+import DAO.CartDAO;
 import DAO.ItemsDAO;
 import static spark.Spark.*;
-import DTO.AddItemDTO;
-import DTO.AuthDTO;
-import DTO.AuthResponseDTO;
-import DTO.ItemsListDTO;
+
+import DAO.TransactionDAO;
+import DTO.*;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -105,9 +105,51 @@ public class Server {
             return "OK";
         });
 
+        post("/api/deleteCart", (req, res) -> {
+            String bodyString = req.body();
+            AddCartDTO cartDTO = gson.fromJson(bodyString,
+                    AddCartDTO.class);
+            // Delete it from the list
+            CartDAO cartDAO = CartDAO.getInstance();
+            cartDAO.deleteCart(cartDTO.item, cartDTO.price, cartDTO.quantity);
+            System.out.println(bodyString);
+            //System.out.println(items.size());
+            return "OK";
+        });
+
         get("/api/getAllItems", (req, res) -> {
             ItemsDAO itemsDAO = ItemsDAO.getInstance();
             ItemsListDTO list = itemsDAO.getAllItems();
+            return gson.toJson(list);
+        });
+
+        post("/api/addCart", (req, res) -> {
+            String bodyString = req.body();
+            AddCartDTO cartDTO = gson.fromJson(bodyString,
+                    AddCartDTO.class);
+            // Add it to the list
+            CartDAO cartDAO = CartDAO.getInstance();
+            cartDAO.addCart(cartDTO.item, cartDTO.price, cartDTO.quantity);
+            System.out.println(bodyString);
+            //System.out.println(items.size());
+            return "OK";
+        });
+
+        post("/api/addTransaction", (req, res) -> {
+            String bodyString = req.body();
+            AddTransactionDTO transactionDTO = gson.fromJson(bodyString,
+                    AddTransactionDTO.class);
+            // Add it to the list
+            TransactionDAO transactionDAO = TransactionDAO.getInstance();
+            transactionDAO.addTransaction(transactionDTO.items, transactionDTO.total);
+            System.out.println(bodyString);
+            //System.out.println(items.size());
+            return "OK";
+        });
+
+        get("/api/getCart", (req, res) -> {
+            CartDAO cartDAO = CartDAO.getInstance();
+            CartListDTO list = cartDAO.getCart();
             return gson.toJson(list);
         });
     }
