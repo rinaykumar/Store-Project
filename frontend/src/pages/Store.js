@@ -1,13 +1,10 @@
-import React from 'react';
-import { Redirect, Link } from 'react-router-dom';
-import '../App.css';
-import axios from 'axios';
+import React from "react";
+import { Redirect, Link } from "react-router-dom";
+import "../App.css";
+import axios from "axios";
 import {
   Typography,
-  Alert,
   AppBar,
-  Tabs,
-  Tab,
   Toolbar,
   Grid,
   MenuItem,
@@ -19,7 +16,7 @@ import {
   Select,
   Container,
 } from "@material-ui/core";
-import { makeStyles, withTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
   toolbar: {
@@ -38,6 +35,13 @@ const useStyles = makeStyles((theme) => ({
     width: "75ch",
     display: "flex",
 
+  },
+
+  paperList2: {
+    height: "5ch",
+    width: "75ch",
+    display: "flex",
+    marginTop: "1em"
   },
   selectEmpty: {
     marginTop: theme.spacing(2),
@@ -68,9 +72,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1),
     minWidth: 120,
   },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
 
   text: {
     marginTop: "1.8rem",
@@ -96,6 +97,11 @@ const useStyles = makeStyles((theme) => ({
   totalLabel: {
     paddingTop: "1rem",
   },
+
+  totalPrice: {
+    paddingRight: "1em",
+    paddingTop: "1rem",
+  }
 }));
 
 const Store = ({appUser, setAppUser}) => {
@@ -218,7 +224,6 @@ const Store = ({appUser, setAppUser}) => {
     let obj = JSON.parse(transactionItem);
     return obj.total;
   }
-  
 
   const sumTotal = (total) => {
     let cartTotal = total.reduce(function(a, b) {return a+b;}, 0);
@@ -230,12 +235,10 @@ const Store = ({appUser, setAppUser}) => {
     fetchCart();
     fetchTransactions();
   }, []);
-  
-  /* Only logged in users can access
+
   if (!appUser) {
     return <Redirect to="/"/>;
   }
-  */
 
   return (
     <div>
@@ -279,34 +282,31 @@ const Store = ({appUser, setAppUser}) => {
                   container
                   spacing={24}
                 >
-                  <Grid item>
+                  <Grid item xs={3} justify="center">
                     <div className={classes.itemName}>
                       {" "}
                       {parseCartItem(cartItem)}
                     </div>
                   </Grid>
 
-                  <Grid item>
+                  <Grid item xs={3} justify="center">
                     <div className={classes.itemName}>
                       x{parseCartQuantity(cartItem)}
                     </div>
                   </Grid>
 
-                  <Grid item>
+                  <Grid item xs={3} justify="center">
                     <div className={classes.price}>
                       <b>${parseCartSubtotal(cartItem)}</b>
                     </div>
                   </Grid>
 
-                  <Grid item>
+                  <Grid item xs={2}>
                     <div className={classes.deleteButton}>
                       <Button
                         variant="outlined"
                         color="secondary"
-                        onClick={() => deleteCart(cartItem)}
-                      >
-                        Delete
-                      </Button>
+                        onClick={() => deleteCart(cartItem)}>Delete</Button>
                     </div>
                   </Grid>
                 </Grid>
@@ -314,15 +314,14 @@ const Store = ({appUser, setAppUser}) => {
             );
           })}
         </div>
-        
         <div className={classes.totalLabel}>
           Total: <b>${sumTotal(total)}</b>
         </div>
-      
+        <br/> 
+        <br/>  
+        <br/>    
         <form className={classes.root} noValidate autoComplete="off">
-          <FormControl
-            className={classes.formControl}
-          >
+          <FormControl className={classes.formControl}>
             <InputLabel id="demo-simple-select-label">Select Item</InputLabel>
             <Select
               labelId="demo-simple-select-label"
@@ -330,11 +329,13 @@ const Store = ({appUser, setAppUser}) => {
               onChange={(e) => setSelectedItem(e.target.value)}
             >
               {items.map((item) => {
-                return <MenuItem  value={parseItem(item)}>{parseItem(item)}</MenuItem>;
+                return (
+                  <MenuItem value={parseItem(item)}>{parseItem(item)}</MenuItem>
+                );
               })}
             </Select>
           </FormControl>
-         
+
           <Typography className={classes.text}>
             Price: ${parsePrice(selectedItem)}
           </Typography>
@@ -343,34 +344,58 @@ const Store = ({appUser, setAppUser}) => {
             id="outlined-basic"
             label="Quantity"
             variant="outlined"
-            onChange={e => setQuantity(e.target.value)}
+            value={quantity}
+            onChange={(e) => setQuantity(e.target.value)}
           />
 
-          <Button variant="contained" color="primary" onClick={() => addCart(selectedItem, quantity)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => addCart(selectedItem, quantity)}
+          >
             Add To Cart
           </Button>
 
-          <Button variant="contained" color="secondary" onClick={() => addTransaction(cart, total)}>Checkout</Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => addTransaction(cart, total)}
+          >
+            Checkout
+          </Button>
         </form>
-        
-        <div>Transaction History:
-        <div>
-          {transactions.map((transactionItem) => {
-            return (
-              <div class="items-item">
-                Items: {parseTransaction(transactionItem)}
-                <div>
-                  Total: ${parseTransactionTotal(transactionItem)}
-                </div>
-              </div> 
-            );
-          })}
-        </div> 
-
-        </div>
-
+        <br/> 
+        <br/> 
+        <br/>      
+        <p>Transaction History</p>
+          <div>
+            {transactions.map((transactionItem) => {
+              return (
+                <Paper elevation={3} className={classes.paperList2}>
+                <Grid
+                  justify="space-between" // Add it here :)
+                  container
+                  spacing={24}
+                >
+                <Grid item>
+                  <div className={classes.itemName}>
+                  Items bought: <b>{parseTransaction(transactionItem)}</b> 
+                  </div>
+                </Grid>
+                <Grid item>
+                  <div className={classes.totalPrice}>
+                  Total: <b>${parseTransactionTotal(transactionItem)}</b> 
+                  </div>
+                </Grid>
+              </Grid>
+              </Paper>
+              );
+            })}
+          </div>
+          <br/> 
+          <br/> 
+          <br/>  
       </Container>
-
     </div>
   );
 };

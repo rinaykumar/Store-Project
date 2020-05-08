@@ -3,10 +3,7 @@ import { Redirect, Link } from "react-router-dom";
 
 import {
   Typography,
-  Alert,
   AppBar,
-  Tabs,
-  Tab,
   Toolbar,
   Grid,
   Paper,
@@ -15,7 +12,7 @@ import {
   Container,
 } from "@material-ui/core";
 
-import { makeStyles, withTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 
 import "../App.css";
 import axios from "axios";
@@ -160,11 +157,10 @@ const Management = ({appUser, setAppUser}) => {
     fetchItems();
   }, []);
 
-  /* Only admin can access management page
+  // Only admin can access management page
   if (appUser !== 'admin') {
     return <Redirect to="/"/>;
   }
-  */
 
   return (
     <div>
@@ -228,15 +224,15 @@ const Management = ({appUser, setAppUser}) => {
                   container
                   spacing={24}
                 >
-                  <Grid item>
+                  <Grid item xs={4} justify="center">
                     <div className={classes.price}>${parsePrice(item)}</div>
                   </Grid>
 
-                  <Grid item>
+                  <Grid item xs={4} justify="center">
                     <div className={classes.itemName}>{parseItem(item)}</div>
                   </Grid>
 
-                  <Grid item>
+                  <Grid item xs={2} justify="center"> 
                     <div className={classes.deleteButton}>
                       <Button
                         variant="outlined"
