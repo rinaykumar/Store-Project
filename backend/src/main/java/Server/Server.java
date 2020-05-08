@@ -152,5 +152,11 @@ public class Server {
             CartListDTO list = cartDAO.getCart();
             return gson.toJson(list);
         });
+
+        get("/api/getTransactions", (req, res) -> {
+            TransactionDAO transactionDAO = TransactionDAO.getInstance();
+            TransactionListDTO list = transactionDAO.getTransactions();
+            return gson.toJson(list);
+        });
     }
 }
